@@ -1,0 +1,40 @@
+# src/Alex/BlogBundle/Resources/config/routing.yml
+
+alex_blog_home:
+    path:      /{page}
+    defaults:  
+         _controller: AlexBlogBundle:Annonce:index
+         page : 1 
+    requirements:
+        page: \d*
+    
+alex_blog_view:
+    path:      /annonce/{id}
+    defaults:  { _controller: AlexBlogBundle:Annonce:view }
+    requirements:
+        id: \d+
+
+alex_blog_view_slug:
+    path:      /{year}/{slug}.{format}
+    defaults:  
+        _controller: AlexBlogBundle:Annonce:viewSlug 
+        format:      html
+    requirements:
+        year:   \d{4}
+        format: html|xml
+    
+alex_blog_add:
+    path:      /add
+    defaults:  { _controller: AlexBlogBundle:Annonce:add }
+
+alex_blog_edit:
+    path:      /edit/{id}
+    defaults:  { _controller: AlexBlogBundle:Annonce:edit }
+    requirements:
+        id: \d+
+
+alex_blog_delete:
+    path:      /delete/{id}
+    defaults:  { _controller: AlexBlogBundle:Annonce:delete }
+    requirements:
+        id: \d+
