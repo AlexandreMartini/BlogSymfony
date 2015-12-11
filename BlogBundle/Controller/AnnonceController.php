@@ -6,43 +6,92 @@ namespace Alex\BlogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AnnonceController extends Controller
 {
-	
-  // La route fait appel à AlexBlogBundle:Advert:view,
-  // on doit donc définir la méthode viewAction.
-  // On donne à cette méthode l'argument $id, pour
-  // correspondre au paramètre {id} de la route
+public function indexAction($page)
+  {
+    // On ne sait pas combien de pages il y a
+    // Mais on sait qu'une page doit être supérieure ou égale à 1
+    if ($page < 1) {
+      // On déclenche une exception NotFoundHttpException, cela va afficher
+      // une page d'erreur 404 (qu'on pourra personnaliser plus tard d'ailleurs)
+      throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
+    }
+
+    // Ici, on récupérera la liste des annonces, puis on la passera au template
+return $this->render('AlexBlogBundle:Annonce:index.html.twig', array(
+  'listAdverts' => array()));
+  }
+
   public function viewAction($id)
   {
-    // $id vaut 5 si l'on a appelé l'URL /platform/advert/5
+    // Ici, on récupérera l'annonce correspondante à l'id $id
 
-    // Ici, on récupèrera depuis la base de données
-    // l'annonce correspondant à l'id $id.
-    // Puis on passera l'annonce à la vue pour
-    // qu'elle puisse l'afficher
-
-    return new Response("Affichage de l'annonce d'id : ".$id);
+    return $this->render('AlexBlogBundle:Annonce:view.html.twig', array(
+      'id' => $id
+    ));
   }
   
-  // On récupère tous les paramètres en arguments de la méthode
-    public function viewSlugAction($slug, $year, $format)
-    {
-        return new Response(
-            "On pourrait afficher l'annonce correspondant au
-            slug '".$slug."', créée en ".$year." et au format ".$format."."
-        );
-    }
-  public function indexAction()
+  public function menuAction()
   {
-    // On veut avoir l'URL de l'annonce d'id 5.
-        $url = $this->get('router')->generate(
-            'alex_blog_view', // 1er argument : le nom de la route
-            array('id' => 5)    // 2e argument : les valeurs des paramètres
-        );
-        // $url vaut « /platform/advert/5 »
+    // On fixe en dur une liste ici, bien entendu par la suite
+    // on la récupérera depuis la BDD !
+    $listAdverts = array(
+      array('id' => 2, 'title' => 'Recherche développeur Symfony2'),
+      array('id' => 5, 'title' => 'Mission de webmaster'),
+      array('id' => 9, 'title' => 'Offre de stage webdesigner')
+    );
 
-        return new Response("L'URL de l'annonce d'id 5 est : ".$url);
+    return $this->render('AlexBlogBundle:Annonce:menu.html.twig', array(
+      // Tout l'intérêt est ici : le contrôleur passe
+      // les variables nécessaires au template !
+      'listAdverts' => $listAdverts
+    ));
+  }
+
+
+  public function addAction(Request $request)
+  {
+    // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
+
+    // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
+    if ($request->isMethod('POST')) {
+      // Ici, on s'Alexcupera de la création et de la gestion du formulaire
+
+      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
+
+      // Puis on redirige vers la page de visualisation de cettte annonce
+      return $this->redirectToRoute('alex_blog_view', array('id' => 5));
+    }
+
+    // Si on n'est pas en POST, alors on affiche le formulaire
+    return $this->render('AlexBlogBundle:Annonce:add.html.twig');
+  }
+
+  public function editAction($id, Request $request)
+  {
+    // Ici, on récupérera l'annonce correspondante à $id
+
+    // Même mécanisme que pour l'ajout
+    if ($request->isMethod('POST')) {
+      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
+
+      return $this->redirectToRoute('alex_blog_view', array('id' => 5));
+    }
+
+    return $this->render('AlexBlogBundle:Annonce:edit.html.twig');
+  }
+
+  public function deleteAction($id)
+  {
+    // Ici, on récupérera l'annonce correspondant à $id
+
+    // Ici, on gérera la suppression de l'annonce en question
+
+    return $this->render('AlexBlogBundle:Annonce:delete.html.twig');
   }
 }
