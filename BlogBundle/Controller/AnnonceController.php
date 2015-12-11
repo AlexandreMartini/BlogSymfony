@@ -21,18 +21,47 @@ public function indexAction($page)
       // une page d'erreur 404 (qu'on pourra personnaliser plus tard d'ailleurs)
       throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
     }
+	
+    // Notre liste d'annonce en dur
+    $listAdverts = array(
+      array(
+        'title'   => 'Recherche développpeur Symfony2',
+        'id'      => 1,
+        'author'  => 'Alexandre',
+        'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
+        'date'    => new \Datetime()),
+      array(
+        'title'   => 'Mission de webmaster',
+        'id'      => 2,
+        'author'  => 'Hugo',
+        'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
+        'date'    => new \Datetime()),
+      array(
+        'title'   => 'Offre de stage webdesigner',
+        'id'      => 3,
+        'author'  => 'Mathieu',
+        'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+        'date'    => new \Datetime())
+    );
 
-    // Ici, on récupérera la liste des annonces, puis on la passera au template
-return $this->render('AlexBlogBundle:Annonce:index.html.twig', array(
-  'listAdverts' => array()));
+    // Et modifiez le 2nd argument pour injecter notre liste
+    return $this->render('AlexBlogBundle:Annonce:index.html.twig', array(
+      'listAdverts' => $listAdverts
+    ));
   }
 
   public function viewAction($id)
   {
-    // Ici, on récupérera l'annonce correspondante à l'id $id
+     $advert = array(
+      'title'   => 'Recherche développpeur Symfony2',
+      'id'      => $id,
+      'author'  => 'Alexandre',
+      'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
+      'date'    => new \Datetime()
+    );
 
     return $this->render('AlexBlogBundle:Annonce:view.html.twig', array(
-      'id' => $id
+      'advert' => $advert
     ));
   }
   
@@ -79,8 +108,18 @@ return $this->render('AlexBlogBundle:Annonce:index.html.twig', array(
     // Même mécanisme que pour l'ajout
     if ($request->isMethod('POST')) {
       $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
+ 
+    $advert = array(
+      'title'   => 'Recherche développpeur Symfony2',
+      'id'      => $id,
+      'author'  => 'Alexandre',
+      'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
+      'date'    => new \Datetime()
+    );
 
-      return $this->redirectToRoute('alex_blog_view', array('id' => 5));
+    return $this->render('AlexBlogBundle:Annonce:edit.html.twig', array(
+      'advert' => $advert
+    ));
     }
 
     return $this->render('AlexBlogBundle:Annonce:edit.html.twig');
