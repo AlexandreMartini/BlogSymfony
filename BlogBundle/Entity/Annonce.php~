@@ -160,28 +160,5 @@ class Annonce
     {
         return $this->content;
     }
-
-    /**
-     * Set published
-     *
-     * @param boolean $published
-     *
-     * @return Annonce
-     */
-    public function setPublished($published)
-    {
-        $this->published = $published;
-
-        return $this;
-    }
-
-    /**
-     * Get published
-     *
-     * @return boolean
-     */
-    public function getPublished()
-    {
-        return $this->published;
-    }
 }
+
