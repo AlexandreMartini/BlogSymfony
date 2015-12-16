@@ -4,6 +4,7 @@
 
 namespace Alex\BlogBundle\Controller;
 
+use Alex\BlogBundle\Entity\Annonce;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,16 +86,27 @@ public function indexAction($page)
 
   public function addAction(Request $request)
   {
-    // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
+    // Création de l'entité
+    $advert = new Annonce();
+    $advert->setTitle('Recherche développeur Symfony2.');
+    $advert->setAuthor('Alexandre');
+    $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…");
+    // On peut ne pas définir ni la date ni la publication,
+    // car ces attributs sont définis automatiquement dans le constructeur
 
-    // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
+    // On récupère l'EntityManager
+    $em = $this->getDoctrine()->getManager();
+
+    // Étape 1 : On « persiste » l'entité
+    $em->persist($advert);
+
+    // Étape 2 : On « flush » tout ce qui a été persisté avant
+    $em->flush();
+
+    // Reste de la méthode qu'on avait déjà écrit
     if ($request->isMethod('POST')) {
-      // Ici, on s'Alexcupera de la création et de la gestion du formulaire
-
       $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
-
-      // Puis on redirige vers la page de visualisation de cettte annonce
-      return $this->redirectToRoute('alex_blog_view', array('id' => 5));
+      return $this->redirect($this->generateUrl('alex_blog_view', array('id' => $advert->getId())));
     }
 
     // Si on n'est pas en POST, alors on affiche le formulaire
