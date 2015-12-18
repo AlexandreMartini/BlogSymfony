@@ -41,11 +41,22 @@ class Annonce
      * @ORM\Column(name="content", type="text")
      */
     private $content;
-	
-	/**
+
+   /**
    * @ORM\Column(name="published", type="boolean")
    */
   private $published = true;
+  
+   /**
+   * @ORM\OneToOne(targetEntity="Alex\BlogBundle\Entity\Image", cascade={"persist"})
+   */
+  private $image;
+  
+  function __construct(){
+  $this->date=new \DateTime();
+  }
+  
+  
     /**
      * Get id
      *
@@ -138,5 +149,29 @@ class Annonce
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Set published
+     *
+     * @param boolean $published
+     *
+     * @return Annonce
+     */
+    public function setPublished($published)
+    {
+        $this->published = $published;
+
+        return $this;
+    }
+
+    /**
+     * Get published
+     *
+     * @return boolean
+     */
+    public function getPublished()
+    {
+        return $this->published;
     }
 }

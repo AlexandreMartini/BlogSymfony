@@ -5,6 +5,7 @@
 namespace Alex\BlogBundle\Controller;
 
 use Alex\BlogBundle\Entity\Annonce;
+use Alex\BlogBundle\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -100,6 +101,14 @@ public function indexAction($page)
     $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…");
     // On peut ne pas définir ni la date ni la publication,
     // car ces attributs sont définis automatiquement dans le constructeur
+
+    // Création de l'entité Image
+    $image = new Image();
+    $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+    $image->setAlt('Job de rêve');
+
+    // On lie l'image à l'annonce
+    $advert->setImage($image);
 
     // On récupère l'EntityManager
     $em = $this->getDoctrine()->getManager();

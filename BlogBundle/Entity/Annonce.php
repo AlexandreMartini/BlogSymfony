@@ -47,9 +47,16 @@ class Annonce
    */
   private $published = true;
   
+   /**
+   * @ORM\OneToOne(targetEntity="Alex\BlogBundle\Entity\Image", cascade={"persist"})
+   */
+  private $image;
+  
   function __construct(){
   $this->date=new \DateTime();
   }
+  
+  
     /**
      * Get id
      *
@@ -166,5 +173,29 @@ class Annonce
     public function getPublished()
     {
         return $this->published;
+    }
+
+    /**
+     * Set image
+     *
+     * @param \Alex\BlogBundle\Entity\Image $image
+     *
+     * @return Annonce
+     */
+    public function setImage(\Alex\BlogBundle\Entity\Image $image = null)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return \Alex\BlogBundle\Entity\Image
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 }
