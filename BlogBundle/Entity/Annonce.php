@@ -1,5 +1,6 @@
 <?php
 namespace Alex\BlogBundle\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * Annonce
@@ -52,8 +53,14 @@ class Annonce
    */
   private $image;
   
+   /**
+   * @ORM\ManyToMany(targetEntity="Alex\BlogBundle\Entity\Category", cascade={"persist"})
+   */
+  private $categories;
+  
   function __construct(){
-  $this->date=new \DateTime();
+    $this->date=new \DateTime();
+    $this->categories = new ArrayCollection();
   }
   
   
@@ -197,5 +204,39 @@ class Annonce
     public function getImage()
     {
         return $this->image;
+    }
+
+    /**
+     * Add category
+     *
+     * @param \Alex\BlogBundle\Entity\Category $category
+     *
+     * @return Annonce
+     */
+    public function addCategory(\Alex\BlogBundle\Entity\Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \Alex\BlogBundle\Entity\Category $category
+     */
+    public function removeCategory(\Alex\BlogBundle\Entity\Category $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }

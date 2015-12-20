@@ -6,6 +6,7 @@ namespace Alex\BlogBundle\Controller;
 
 use Alex\BlogBundle\Entity\Annonce;
 use Alex\BlogBundle\Entity\Image;
+use Alex\BlogBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,23 +55,27 @@ public function indexAction($page)
 
   public function viewAction($id)
   {
-     // On récupère le repository
-    $repository = $this->getDoctrine()
-      ->getManager()
-      ->getRepository('AlexBlogBundle:Annonce');
+      $em = $this->getDoctrine()->getManager();
 
-    //On récupère l'entité correspondante à l'id $id
-    $advert = $repository->find($id);
+    // On récupère l'annonce $id
+    $advert = $em
+      ->getRepository('AlexBlogBundle:Annonce')
+      ->find($id)
+    ;
 
-    // $advert est donc une instance de Alex\BlogBundle\Entity\Annonce
-    // ou null si l'id $id  n'existe pas, d'où ce if :
     if (null === $advert) {
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    // Le render ne change pas, on passait avant un tableau, maintenant un objet
+    // On récupère la liste des candidatures de cette annonce
+    $listApplications = $em
+      ->getRepository('AlexBlogBundle:Application')
+      ->findBy(array('advert' => $advert))
+    ;
+
     return $this->render('AlexBlogBundle:Annonce:view.html.twig', array(
-      'advert' => $advert
+      'advert'           => $advert,
+      'listApplications' => $listApplications
     ));
   }
   
@@ -110,6 +115,20 @@ public function indexAction($page)
     // On lie l'image à l'annonce
     $advert->setImage($image);
 
+	// Création d'une première candidature
+    $application1 = new Application();
+    $application1->setAuthor('Marine');
+    $application1->setContent("J'ai toutes les qualités requises.");
+
+    // Création d'une deuxième candidature par exemple
+    $application2 = new Application();
+    $application2->setAuthor('Pierre');
+    $application2->setContent("Je suis très motivé.");
+
+    // On lie les candidatures à l'annonce
+    $application1->setAdvert($advert);
+    $application2->setAdvert($advert);
+
     // On récupère l'EntityManager
     $em = $this->getDoctrine()->getManager();
 
@@ -131,33 +150,57 @@ public function indexAction($page)
 
   public function editAction($id, Request $request)
   {
-    // Ici, on récupérera l'annonce correspondante à $id
+  
+    $em = $this->getDoctrine()->getManager();
 
-    // Même mécanisme que pour l'ajout
-    if ($request->isMethod('POST')) {
-      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
- 
-    $advert = array(
-      'title'   => 'Recherche développpeur Symfony2',
-      'id'      => $id,
-      'author'  => 'Alexandre',
-      'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-      'date'    => new \Datetime()
-    );
+    // On récupère l'annonce $id
+    $advert = $em->getRepository('AlexBlogBundle:Annonce')->find($id);
+
+    if (null === $advert) {
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+    }
+
+    // La méthode findAll retourne toutes les catégories de la base de données
+    $listCategories = $em->getRepository('AlexBlogBundle:Category')->findAll();
+
+    // On boucle sur les catégories pour les lier à l'annonce
+    foreach ($listCategories as $category) {
+      $advert->addCategory($category);
+    }
+
+    // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+    // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+
+    // Étape 2 : On déclenche l'enregistrement
+    $em->flush();
+
 
     return $this->render('AlexBlogBundle:Annonce:edit.html.twig', array(
       'advert' => $advert
     ));
-    }
-
-    return $this->render('AlexBlogBundle:Annonce:edit.html.twig');
   }
-
+  
   public function deleteAction($id)
   {
-    // Ici, on récupérera l'annonce correspondant à $id
+    $em = $this->getDoctrine()->getManager();
 
-    // Ici, on gérera la suppression de l'annonce en question
+    // On récupère l'annonce $id
+    $advert = $em->getRepository('AlexBlogBundle:Annonce')->find($id);
+
+    if (null === $advert) {
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+    }
+
+    // On boucle sur les catégories de l'annonce pour les supprimer
+    foreach ($advert->getCategories() as $category) {
+      $advert->removeCategory($category);
+    }
+
+    // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+    // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+
+    // On déclenche la modification
+    $em->flush();
 
     return $this->render('AlexBlogBundle:Annonce:delete.html.twig');
   }

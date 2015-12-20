@@ -9,11 +9,10 @@
 
 {% block ocplatform_body %}
 
-    <div >
-      
+    <div >     
     {% if advert.image is not null %}
-		<img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
-	{% endif %}
+        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+    {% endif %}
     </div>
 
   <h2>
@@ -25,7 +24,15 @@
     {{ advert.content }}
   </div>
 
-
+    {% if not advert.categories.empty %}
+    <p>
+      Cette annonce est parue dans les catégories suivantes :
+      {% for category in advert.categories %}
+        {{ category.name }}{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+  {% endif %}
+  
   <p>
   
     <a href="{{ path('alex_blog_home') }}" class="btn btn-default">

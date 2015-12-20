@@ -52,6 +52,11 @@ class Annonce
    */
   private $image;
   
+   /**
+   * @ORM\ManyToMany(targetEntity="Alex\BlogBundle\Entity\Category", cascade={"persist"})
+   */
+  private $categories;
+  
   function __construct(){
   $this->date=new \DateTime();
   }
@@ -173,5 +178,29 @@ class Annonce
     public function getPublished()
     {
         return $this->published;
+    }
+
+    /**
+     * Set image
+     *
+     * @param \Alex\BlogBundle\Entity\Image $image
+     *
+     * @return Annonce
+     */
+    public function setImage(\Alex\BlogBundle\Entity\Image $image = null)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return \Alex\BlogBundle\Entity\Image
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 }
