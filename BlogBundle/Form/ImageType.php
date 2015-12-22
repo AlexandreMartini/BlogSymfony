@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class AnnonceType extends AbstractType
+class ImageType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,18 +15,8 @@ class AnnonceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-           ->add('date',      'date')
-           ->add('title',     'text')
-           ->add('author',    'text')
-           ->add('content',   'textarea')
-           ->add('published', 'checkbox', array('required' => false))
-           ->add('image',      new ImageType())
-           ->add('categories', 'collection', array(
-                 'type'         => new CategoryType(),
-                 'allow_add'    => true,
-                 'allow_delete' => true
-                 ))
-           ->add('save',      'submit')
+            ->add('url')
+            ->add('alt')
         ;
     }
     
@@ -36,7 +26,7 @@ class AnnonceType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Alex\BlogBundle\Entity\Annonce'
+            'data_class' => 'Alex\BlogBundle\Entity\Image'
         ));
     }
 
@@ -45,6 +35,6 @@ class AnnonceType extends AbstractType
      */
     public function getName()
     {
-        return 'alex_blogbundle_annonce';
+        return 'alex_blogbundle_image';
     }
 }
