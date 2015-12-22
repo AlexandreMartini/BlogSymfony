@@ -1,5 +1,4 @@
 <?php
-// src/OC/PlatformBundle/Entity/Skill.php
 
 namespace Alex\BlogBundle\Entity;
 

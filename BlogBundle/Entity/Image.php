@@ -1,5 +1,4 @@
 <?php
-// src/Alex/BlogBundle/Entity/Image
 
 namespace Alex\BlogBundle\Entity;
 

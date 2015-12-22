@@ -2,12 +2,14 @@
 namespace Alex\BlogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * Annonce
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Alex\BlogBundle\Entity\AnnonceRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Annonce
 {
@@ -28,7 +30,7 @@ class Annonce
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
      */
     private $title;
     /**
@@ -44,13 +46,18 @@ class Annonce
      */
     private $content;
 
-   /**
+  /**
    * @ORM\Column(name="published", type="boolean")
    */
   private $published = true;
   
+ /**
+ * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+ */
+  private $updatedAt;
+  
    /**
-   * @ORM\OneToOne(targetEntity="Alex\BlogBundle\Entity\Image", cascade={"persist"})
+   * @ORM\OneToOne(targetEntity="Alex\BlogBundle\Entity\Image", cascade={"persist", "remove"})
    */
   private $image;
   
@@ -64,8 +71,23 @@ class Annonce
    */
   private $categories;
   
+  /**
+   * @ORM\Column(name="nb_applications", type="integer")
+   */
+  private $nbApplications = 0;
+
+  public function increaseApplication()
+  {
+    $this->nbApplications++;
+  }
+
+  public function decreaseApplication()
+  {
+    $this->nbApplications--;
+  }
+  
   function __construct(){
-    $this->date=new \DateTime();
+    $this->date = new \DateTime();
     $this->categories = new ArrayCollection();
     $this->applications = new ArrayCollection();
   }
@@ -283,4 +305,36 @@ class Annonce
     {
         return $this->applications;
     }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Annonce
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+/**
+ * @ORM\PreUpdate
+ */
+  public function updateDate()
+  {
+    $this->setUpdatedAt(new \Datetime());
+  }
 }
