@@ -5,6 +5,7 @@
 namespace Alex\BlogBundle\Controller;
 
 use Alex\BlogBundle\Entity\Annonce;
+use Alex\BlogBundle\Entity\AnnonceSkill;
 use Alex\BlogBundle\Entity\Image;
 use Alex\BlogBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -70,12 +71,18 @@ public function indexAction($page)
     // On récupère la liste des candidatures de cette annonce
     $listApplications = $em
       ->getRepository('AlexBlogBundle:Application')
-      ->findBy(array('advert' => $advert))
-    ;
+      ->findBy(array('advert' => $advert));
+	  
+	   // On récupère maintenant la liste des AdvertSkill
+    $listAdvertSkills = $em
+      ->getRepository('AlexBlogBundle:AnnonceSkill')
+      ->findBy(array('advert' => $advert));
+
 
     return $this->render('AlexBlogBundle:Annonce:view.html.twig', array(
       'advert'           => $advert,
-      'listApplications' => $listApplications
+      'listApplications' => $listApplications,
+	  'listAdvertSkills' => $listAdvertSkills
     ));
   }
   
@@ -99,38 +106,40 @@ public function indexAction($page)
 
   public function addAction(Request $request)
   {
-    // Création de l'entité
+   
+
+    // On récupère l'EntityManager
+    $em = $this->getDoctrine()->getManager();
+	
+	 // Création de l'entité Advert
     $advert = new Annonce();
     $advert->setTitle('Recherche développeur Symfony2.');
     $advert->setAuthor('Alexandre');
     $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…");
-    // On peut ne pas définir ni la date ni la publication,
-    // car ces attributs sont définis automatiquement dans le constructeur
 
-    // Création de l'entité Image
-    $image = new Image();
-    $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
-    $image->setAlt('Job de rêve');
+   // On récupère toutes les compétences possibles
+    $listSkills = $em->getRepository('AlexBlogBundle:Skill')->findAll();
 
-    // On lie l'image à l'annonce
-    $advert->setImage($image);
+    // Pour chaque compétence
+    foreach ($listSkills as $skill) {
+      // On crée une nouvelle « relation entre 1 annonce et 1 compétence »
+      $advertSkill = new AnnonceSkill();
 
-	// Création d'une première candidature
-    $application1 = new Application();
-    $application1->setAuthor('Marine');
-    $application1->setContent("J'ai toutes les qualités requises.");
+      // On la lie à l'annonce, qui est ici toujours la même
+      $advertSkill->setAdvert($advert);
+      // On la lie à la compétence, qui change ici dans la boucle foreach
+      $advertSkill->setSkill($skill);
 
-    // Création d'une deuxième candidature par exemple
-    $application2 = new Application();
-    $application2->setAuthor('Pierre');
-    $application2->setContent("Je suis très motivé.");
+      // Arbitrairement, on dit que chaque compétence est requise au niveau 'Expert'
+      $advertSkill->setLevel('Expert');
 
-    // On lie les candidatures à l'annonce
-    $application1->setAdvert($advert);
-    $application2->setAdvert($advert);
+      // Et bien sûr, on persiste cette entité de relation, propriétaire des deux autres relations
+      $em->persist($advertSkill);
+    }
 
-    // On récupère l'EntityManager
-    $em = $this->getDoctrine()->getManager();
+    // Doctrine ne connait pas encore l'entité $advert. Si vous n'avez pas définit la relation AdvertSkill
+    // avec un cascade persist (ce qui est le cas si vous avez utilisé mon code), alors on doit persister $advert
+    $em->persist($advert);
 
     // Étape 1 : On « persiste » l'entité
     $em->persist($advert);

@@ -1,5 +1,6 @@
 <?php
 namespace Alex\BlogBundle\Entity;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 /**
@@ -53,6 +54,11 @@ class Annonce
    */
   private $image;
   
+  /**
+   * @ORM\OneToMany(targetEntity="Alex\BlogBundle\Entity\Application", mappedBy="annonce")
+   */
+  private $applications; // Notez le « s », une annonce est liée à plusieurs candidatures
+  
    /**
    * @ORM\ManyToMany(targetEntity="Alex\BlogBundle\Entity\Category", cascade={"persist"})
    */
@@ -61,6 +67,7 @@ class Annonce
   function __construct(){
     $this->date=new \DateTime();
     $this->categories = new ArrayCollection();
+    $this->applications = new ArrayCollection();
   }
   
   
@@ -238,5 +245,42 @@ class Annonce
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add application
+     *
+     * @param \Alex\BlogBundle\Entity\Application $application
+     *
+     * @return Annonce
+     */
+    public function addApplication(\Alex\BlogBundle\Entity\Application $application)
+    {
+        $this->applications[] = $application;
+         // On lie l'annonce à la candidature
+         $application->setAdvert($this);
+
+
+        return $this;
+    }
+
+    /**
+     * Remove application
+     *
+     * @param \Alex\BlogBundle\Entity\Application $application
+     */
+    public function removeApplication(\Alex\BlogBundle\Entity\Application $application)
+    {
+        $this->applications->removeElement($application);
+    }
+
+    /**
+     * Get applications
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getApplications()
+    {
+        return $this->applications;
     }
 }

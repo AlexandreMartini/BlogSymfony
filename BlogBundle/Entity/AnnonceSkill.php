@@ -35,4 +35,86 @@ class AnnonceSkill
   private $skill;
   
   // ... vous pouvez ajouter d'autres attributs bien sûr
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set level
+     *
+     * @param string $level
+     *
+     * @return AnnonceSkill
+     */
+    public function setLevel($level)
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    /**
+     * Get level
+     *
+     * @return string
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    /**
+     * Set advert
+     *
+     * @param \Alex\BlogBundle\Entity\Annonce $advert
+     *
+     * @return AnnonceSkill
+     */
+    public function setAdvert(\Alex\BlogBundle\Entity\Annonce $advert)
+    {
+        $this->advert = $advert;
+
+        return $this;
+    }
+
+    /**
+     * Get advert
+     *
+     * @return \Alex\BlogBundle\Entity\Annonce
+     */
+    public function getAdvert()
+    {
+        return $this->advert;
+    }
+
+    /**
+     * Set skill
+     *
+     * @param \Alex\BlogBundle\Entity\Skill $skill
+     *
+     * @return AnnonceSkill
+     */
+    public function setSkill(\Alex\BlogBundle\Entity\Skill $skill)
+    {
+        $this->skill = $skill;
+
+        return $this;
+    }
+
+    /**
+     * Get skill
+     *
+     * @return \Alex\BlogBundle\Entity\Skill
+     */
+    public function getSkill()
+    {
+        return $this->skill;
+    }
 }
