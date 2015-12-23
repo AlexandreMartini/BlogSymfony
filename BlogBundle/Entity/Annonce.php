@@ -337,4 +337,28 @@ class Annonce
   {
     $this->setUpdatedAt(new \Datetime());
   }
+
+    /**
+     * Set nbApplications
+     *
+     * @param integer $nbApplications
+     *
+     * @return Annonce
+     */
+    public function setNbApplications($nbApplications)
+    {
+        $this->nbApplications = $nbApplications;
+
+        return $this;
+    }
+
+    /**
+     * Get nbApplications
+     *
+     * @return integer
+     */
+    public function getNbApplications()
+    {
+        return $this->nbApplications;
+    }
 }

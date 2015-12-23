@@ -6,11 +6,11 @@
   Modifier une annonce - {{ parent() }}
 {% endblock %}
 
-{% block alexblog_body %}
+{% block ocplatform_body %}
 
   <h2>Modifier une annonce</h2>
 
-  {{ include("AlexBlogBundle:Annonce:form.html.twig") }}
+  {% include "AlexBlogBundle:Annonce:form.html.twig"%}
 
   <p>
     Vous éditez une annonce déjà existante, merci de ne pas changer

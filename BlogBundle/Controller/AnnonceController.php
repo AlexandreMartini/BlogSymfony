@@ -106,7 +106,7 @@ public function indexAction($page)
   public function addAction(Request $request)
   {
     $advert = new Annonce();
-    $form = $this->get('form.factory')->create(new AnnonceType(), $advert);
+    $form = $this->createForm(new AnnonceType(), $advert);
 
     if ($form->handleRequest($request)->isValid()) {
       $em = $this->getDoctrine()->getManager();
