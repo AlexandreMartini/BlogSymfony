@@ -14,7 +14,7 @@ class AnnonceEditType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder -> remove('date')
+        $builder -> remove('date');
     }
 
     public function getName()

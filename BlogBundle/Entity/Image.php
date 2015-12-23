@@ -243,5 +243,7 @@ class Image
         return $this->tempFilename;
 
     }
+	
+	
 
 }

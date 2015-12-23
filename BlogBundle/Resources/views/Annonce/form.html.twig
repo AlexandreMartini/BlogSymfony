@@ -10,9 +10,10 @@
 
     <div class="form-group">
       
-      {{ form_errors(form.date) }}
+      
       <div class="col-sm-4">
         {{ form_row(form.date) }}
+        {{ form_errors(form.date) }}
       </div>
     </div>
 
@@ -46,7 +47,6 @@
         {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
       </div>
     </div>
-	
 
   {# Génération du label + error + widget pour un champ #}
 

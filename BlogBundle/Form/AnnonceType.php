@@ -22,11 +22,6 @@ class AnnonceType extends AbstractType
            ->add('author',    'text')
            ->add('content',   'textarea')
            ->add('image',      new ImageType())
-           ->add('categories', 'collection', array(
-                 'type'         => new CategoryType(),
-                 'allow_add'    => true,
-                 'allow_delete' => true
-                 ))
            ->add('categories', 'entity', array(
                  'class'    => 'AlexBlogBundle:Category',
                  'property' => 'name',

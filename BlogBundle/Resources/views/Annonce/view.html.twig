@@ -11,7 +11,8 @@
 
     <div >     
     {% if advert.image is not null %}
-        <img src="\web\uploads\img\{{ advert.image.id }}.{{advert.image.url}}" alt="{{ advert.image.alt }}"/>
+        <img src="{{ asset(advert.image.uploadDir ~ '/' ~ advert.image.id ~ '.' ~ advert.image.url) }}"
+  alt="{{ advert.image.alt }}"
     {% endif %}
     </div>
 
